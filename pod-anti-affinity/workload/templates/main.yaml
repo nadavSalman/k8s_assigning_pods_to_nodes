@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    security: S1
+  name: nginx
+spec:
+  replicas: 15
+  selector:
+    matchLabels:
+      security: S1
+  template:
+    metadata:
+      labels:
+        security: S1
+    spec:
+      affinity:
+
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: security
+                operator: In
+                values:
+                - S1
+            topologyKey: "kubernetes.io/hostname"
+
+        #   preferredDuringSchedulingIgnoredDuringExecution:
+        #   - weight: 100
+        #     podAffinityTerm:
+        #       labelSelector: 
+        #         matchExpressions:
+        #         - key: security
+        #         operator: In
+        #         values:
+        #         - S1
+        #       topologyKey: "kubernetes.io/hostname"
+
+
+
+      containers:
+      - image: nginx
+        name: nginx
